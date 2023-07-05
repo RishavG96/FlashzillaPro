@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "91514CCA-7184-4C14-9A8A-D70F0668F876"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C6D76B45-CA41-40D1-8883-CF68EB694D91"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlashzillaPro/ContentView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "addCardBack(card:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C6D76B45-CA41-40D1-8883-CF68EB694D91 - 4fcb91bd25f57d8f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FlashzillaPro.ContentView.addCardBack(card: FlashzillaPro.Card) -&gt; ()"
+                  moduleName = "FlashzillaPro"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rishavgupta/Documents/HackingWithSwift/FlashzillaPro/FlashzillaPro/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "1108">
+               </Location>
+               <Location
+                  uuid = "C6D76B45-CA41-40D1-8883-CF68EB694D91 - 4fcb91bd25f57dac"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FlashzillaPro.ContentView.addCardBack(card: FlashzillaPro.Card) -&gt; ()"
+                  moduleName = "FlashzillaPro"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rishavgupta/Documents/HackingWithSwift/FlashzillaPro/FlashzillaPro/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189"
+                  offsetFromSymbolStart = "1592">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "36AD0505-3998-4CB0-8DF7-96F74EC1E30B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlashzillaPro/ContentView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
