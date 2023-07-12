@@ -12,13 +12,15 @@ struct EditCards: View {
     @State private var cards = [Card]()
     @State private var newPrompt = ""
     @State private var newAnswer = ""
+    @State private var newStatement = ""
     
     var body: some View {
         NavigationView {
             List {
                 Section("Add new card") {
-                    TextField("Prompt", text: $newPrompt)
-                    TextField("Answer", text: $newAnswer)
+                    TextField("New Word", text: $newPrompt)
+                    TextField("Meaning", text: $newAnswer)
+                    TextField("Statement", text: $newStatement)
                     Button("Add Card", action: addCard)
                 }
                 
@@ -29,7 +31,12 @@ struct EditCards: View {
                                 .font(.headline)
                             
                             Text(cards[index].answer)
-                                .foregroundColor(.secondary )
+                                .bold()
+                                .foregroundColor(.secondary)
+                            
+                            Text(cards[index].statement)
+                                .foregroundColor(.secondary)
+                                .font(.caption)
                         }
                     }
                     .onDelete(perform: removeCards)
@@ -41,10 +48,14 @@ struct EditCards: View {
             }
             .listStyle(.grouped)
             .onAppear(perform: loadData)
+            .onDisappear {
+                AppDelegate.orientationLock = .landscape
+            }
         }
     }
     
     func done() {
+        addCard()
         dismiss()
     }
     
@@ -54,6 +65,8 @@ struct EditCards: View {
                 cards = decoded
             }
         }
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait, forKey: "orientation")
+        AppDelegate.orientationLock = .portrait
     }
     
     func saveData() {
@@ -65,14 +78,16 @@ struct EditCards: View {
     func addCard() {
         let trimmedPrompt = newPrompt.trimmingCharacters(in: .whitespaces)
         let trimmedAnswer = newAnswer.trimmingCharacters(in: .whitespaces)
+        let trimmedStatement = newStatement.trimmingCharacters(in: .whitespaces)
         guard trimmedAnswer.isEmpty == false && trimmedPrompt.isEmpty == false else { return }
         
-        let card = Card(id: UUID(), prompt: trimmedPrompt, answer: trimmedAnswer)
+        let card = Card(id: UUID(), prompt: trimmedPrompt, answer: trimmedAnswer, statement: trimmedStatement)
         cards.insert(card, at: 0)
         saveData()
         
         newPrompt = ""
         newAnswer = ""
+        newStatement = ""
     }
     
     func removeCards(at offsets: IndexSet) {
@@ -81,6 +96,8 @@ struct EditCards: View {
     }
 }
 
-#Preview {
-    EditCards()
+struct EditCards_Previews: PreviewProvider {
+    static var previews: some View {
+        EditCards()
+    }
 }

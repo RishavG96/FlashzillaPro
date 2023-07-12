@@ -10,12 +10,17 @@ import SwiftUI
 struct CardView: View {
     let card: Card
     var removal: ((Bool) -> Void)? = nil
+    var showingAnswer: ((Bool) -> Void)
     
     @State private var feedback = UINotificationFeedbackGenerator()
     
     @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
     @Environment(\.accessibilityVoiceOverEnabled) var voidOverEnabled
-    @State private var isShowingAnswer = false
+    @State private var isShowingAnswer = false {
+        didSet {
+            isShowingAnswer ? showingAnswer(true) : showingAnswer(false)
+        }
+    }
     @State private var offset = CGSize.zero
     
     var body: some View {
@@ -48,16 +53,21 @@ struct CardView: View {
                         Text(card.answer)
                             .font(.title)
                             .foregroundColor(.gray)
+                        
+                        Text(card.statement)
+                            .font(.caption).bold()
+                            .foregroundColor(.gray)
                     }
                 }
             }
             .padding()
             .multilineTextAlignment(.center)
         }
-        .frame(width: 450, height: 250)
+        .frame(width: 400, height: 250)
+        .padding()
         .rotationEffect(.degrees(Double(offset.width / 5)))
-        .offset(x: offset.width * 5, y: 0)
-        .opacity(2 - Double(abs(offset.width / 50)))
+        .offset(x: offset.width * 2, y: 0)
+        .opacity(3 - Double(abs(offset.width / 50)))
         .accessibilityAddTraits(.isButton)
         .gesture(
             DragGesture()
@@ -84,9 +94,18 @@ struct CardView: View {
             isShowingAnswer.toggle()
         }
         .animation(.spring(), value: offset)
+        .onAppear {
+            UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft, forKey: "orientation")
+            AppDelegate.orientationLock = .landscape
+        }
+        .onDisappear {
+            AppDelegate.orientationLock = .all
+        }
     }
 }
 
-#Preview {
-    CardView(card: Card.example)
+struct CardView_Previews: PreviewProvider {
+    static var previews: some View {
+        CardView(card: Card.example, showingAnswer: { _ in })
+    }
 }

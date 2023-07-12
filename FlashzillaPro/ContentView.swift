@@ -7,6 +7,27 @@
 
 import SwiftUI
 
+// Our custom view modifier to track rotation and
+// call our action
+//struct DeviceRotationViewModifier: ViewModifier {
+//    let action: (UIDeviceOrientation) -> Void
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .onAppear()
+//            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+//                action(UIDevice.current.orientation)
+//            }
+//    }
+//}
+
+// A View wrapper to make the modifier easier to use
+//extension View {
+//    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+//        self.modifier(DeviceRotationViewModifier(action: action))
+//    }
+//}
+
 extension View {
     func stacked(at position: Int, in total: Int) -> some View {
         let offset = Double(total - position)
@@ -17,6 +38,7 @@ extension View {
 struct ContentView: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOverEnabled
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var cards = [Card]()
     
     @State private var timeRemaining = 100
@@ -27,6 +49,8 @@ struct ContentView: View {
     @State private var isActive = true
     
     @State private var showingEditScreen = false
+    
+    @State private var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
         ZStack {
@@ -45,7 +69,7 @@ struct ContentView: View {
                 ZStack {
                     ForEach(cards) { card in
                         let index = cards.firstIndex(where: { $0.id == card.id }) ?? 0
-                        CardView(card: card) { state in
+                        CardView(card: card, removal: { state in
                             withAnimation {
                                 if state == false {
                                     if let card = removeCard(at: index) {
@@ -55,13 +79,22 @@ struct ContentView: View {
                                     _ = removeCard(at: index)
                                 }
                             }
-                        }
+                            isActive = true
+                        }, showingAnswer: { showingAnswer in
+                            if showingAnswer {
+                                isActive = false
+                            } else {
+                                isActive = true
+                            }
+                        })
                         .stacked(at: index, in: cards.count)
                         .allowsHitTesting(index == cards.count - 1)
                         .accessibilityHidden(index < cards.count - 1)
+                        .padding()
                     }
                 }
                 .allowsHitTesting(timeRemaining > 0)
+                .padding()
                 
                 if cards.isEmpty {
                     Button("Start Again", action: resetCards)
@@ -84,6 +117,8 @@ struct ContentView: View {
                             .background(.black.opacity(0.7))
                             .clipShape(Circle())
                     }
+                    .padding()
+                    .offset(x: -10, y: 0)
                 }
                 Spacer()
             }
@@ -146,9 +181,19 @@ struct ContentView: View {
                 isActive = false
             }
         }
+//        .onRotate { newOrientation in
+//            orientation = newOrientation
+//        }
         .sheet(isPresented: $showingEditScreen, onDismiss: resetCards, content: EditCards.init)
         .onAppear(perform: resetCards)
+        .onDisappear {
+            AppDelegate.orientationLock = .all
+        }
     }
+    
+//    var randomCards: [Card] {
+//        return cards.shuffled()
+//    }
     
     func removeCard(at index: Int) -> Card? {
         guard index >= 0 else { return nil }
@@ -163,14 +208,16 @@ struct ContentView: View {
     
     func resetCards() {
         loadData()
-        timeRemaining = 100
+        timeRemaining = cards.count * 5
         isActive = true
+        UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft, forKey: "orientation")
+        AppDelegate.orientationLock = .landscape
     }
     
     func loadData() {
         if let data = UserDefaults.standard.data(forKey: "Cards") {
             if let decoded = try? JSONDecoder().decode([Card].self, from: data) {
-                cards = decoded
+                cards = decoded.shuffled()
             }
         }
     }
@@ -182,18 +229,29 @@ struct ContentView: View {
 //    }
     
     func addCardBack(card: Card) {
-        let card = Card(id: UUID(), prompt: card.prompt, answer: card.answer)
+        let card = Card(id: UUID(), prompt: card.prompt, answer: card.answer, statement: card.statement)
         print(cards)
         if cards.count == 0 {
             cards.insert(card, at: 0)
         } else {
-            cards.insert(card, at: cards.count - 1)
+            cards.insert(card, at: 0)
         }
         print(cards)
 //        saveData()
     }
 }
 
-#Preview {
-    ContentView()
+class AppDelegate: NSObject, UIApplicationDelegate {
+         
+    static var orientationLock = UIInterfaceOrientationMask.all //By default you want all your views to rotate freely
+ 
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return AppDelegate.orientationLock
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
