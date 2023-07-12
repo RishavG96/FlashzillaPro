@@ -40,6 +40,8 @@ struct EditCards: View {
                         }
                     }
                     .onDelete(perform: removeCards)
+                } header: {
+                    Text("Total words: \(cards.count)")
                 }
             }
             .navigationTitle("Edit Cards")

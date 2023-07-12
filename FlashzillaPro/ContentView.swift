@@ -80,6 +80,9 @@ struct ContentView: View {
                                 }
                             }
                             isActive = true
+                            if cards.count == 0 {
+                                isActive = false
+                            }
                         }, showingAnswer: { showingAnswer in
                             if showingAnswer {
                                 isActive = false
@@ -208,10 +211,11 @@ struct ContentView: View {
     
     func resetCards() {
         loadData()
-        timeRemaining = cards.count * 5
+        timeRemaining = cards.count * 10
         isActive = true
         UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft, forKey: "orientation")
         AppDelegate.orientationLock = .landscape
+        addNotification()
     }
     
     func loadData() {
@@ -238,6 +242,39 @@ struct ContentView: View {
         }
         print(cards)
 //        saveData()
+    }
+    
+    func addNotification() {
+        let center = UNUserNotificationCenter.current()
+        
+        let addRequest = {
+            let content = UNMutableNotificationContent()
+            content.title = "Revise cards"
+            content.subtitle = "Get to it. Chop Chop!"
+            content.sound = .default
+            
+            var dateComponents = DateComponents()
+            dateComponents.hour = 2
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+//            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
+            
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            center.add(request)
+        }
+        
+        center.getNotificationSettings { settings in
+            if settings.authorizationStatus == .authorized {
+                addRequest()
+            } else {
+                center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                    if success {
+                        addRequest()
+                    } else {
+                        print("D'Oh!")
+                    }
+                }
+            }
+        }
     }
 }
 

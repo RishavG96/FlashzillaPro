@@ -51,7 +51,7 @@ struct CardView: View {
                     
                     if isShowingAnswer {
                         Text(card.answer)
-                            .font(.title)
+                            .font(.title3)
                             .foregroundColor(.gray)
                         
                         Text(card.statement)
